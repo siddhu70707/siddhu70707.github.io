@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siddhu70707 | System Architect</title>
+    <style>
+        :root {
+            --neon-green: #00ff41;
+            --neon-blue: #00e5ff;
+            --bg-dark: #020202;
+            --card-bg: rgba(10, 10, 10, 0.7);
+            --border-glow: rgba(0, 229, 255, 0.2);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #e0e0e0;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            margin: 0;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        #binary-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            opacity: 0.15;
+        }
+
+        .status-bar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            border-bottom: 1px solid #222;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.65rem;
+            color: var(--neon-green);
+            z-index: 100;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 120px 20px 60px 20px;
+        }
+
+        header {
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 8vw, 3.5rem);
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            margin: 0;
+            letter-spacing: -1px;
+        }
+
+        .typewriter {
+            color: var(--neon-blue);
+            font-size: 1.2rem;
+            font-weight: bold;
+            min-height: 1.5em;
+        }
+
+        h2 {
+            color: #444;
+            font-size: 0.8rem;
+            margin-top: 80px;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            border-bottom: 1px solid #111;
+            padding-bottom: 15px;
+        }
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .project-card {
+            background: var(--card-bg);
+            border: 1px solid #1a1a1a;
+            padding: 30px;
+            border-radius: 12px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            backdrop-filter: blur(12px);
+            position: relative;
+        }
+
+        .project-card:hover {
+            border-color: var(--neon-blue);
+            box-shadow: 0 15px 40px rgba(0, 229, 255, 0.1);
+            transform: translateY(-8px) scale(1.02);
+        }
+
+        .project-card h3 {
+            margin: 0 0 12px 0;
+            color: #fff;
+            font-size: 1.4rem;
+        }
+
+        .tag {
+            display: inline-block;
+            background: rgba(0, 229, 255, 0.1);
+            color: var(--neon-blue);
+            padding: 4px 12px;
+            font-size: 0.65rem;
+            border-radius: 20px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .project-card p {
+            color: #888;
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            color: #000;
+            background: var(--neon-blue);
+            text-decoration: none;
+            padding: 12px 24px;
+            font-weight: 900;
+            font-size: 0.75rem;
+            text-align: center;
+            text-transform: uppercase;
+            transition: 0.3s;
+            border-radius: 4px;
+            letter-spacing: 2px;
+        }
+
+        .btn:hover {
+            background: #fff;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+            transform: scale(1.05);
+        }
+
+        .dev-card {
+            border: 1px dashed #333;
+            background: rgba(5, 5, 5, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--neon-blue);
+            border: 1px solid var(--neon-blue);
+            cursor: default;
+        }
+
+        /* Terminal Section Styles */
+        .terminal-container {
+            margin-top: 80px;
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .terminal-header {
+            background: #1a1a1a;
+            padding: 10px 15px;
+            font-size: 0.7rem;
+            color: #888;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #333;
+        }
+
+        .terminal-body {
+            padding: 20px;
+            font-size: 0.9rem;
+            color: var(--neon-green);
+            min-height: 350px;
+            white-space: pre-wrap;
+        }
+
+        .terminal-cursor {
+            display: inline-block;
+            width: 10px;
+            height: 18px;
+            background: var(--neon-green);
+            animation: blink 1s infinite;
+            vertical-align: middle;
+            margin-left: 5px;
+        }
+
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        footer {
+            margin-top: 120px;
+            text-align: center;
+            padding: 60px 0;
+            border-top: 1px solid #111;
+        }
+
+        footer a {
+            color: #333;
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+
+        footer a:hover { color: var(--neon-blue); }
+
+        @media (max-width: 600px) {
+            .project-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="binary-canvas"></canvas>
+
+    <div class="status-bar">
+        <div>Siddhu_Labs</div>
+        <div id="uptime-container">UPTIME: <span id="uptime">00:00:00</span></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>Siddhu70707</h1>
+            <div class="typewriter" id="typewriter"></div>
+        </header>
+
+        <section id="completed">
+            <h2>0x01 // Deployed_Systems</h2>
+            <div class="project-grid">
+                
+                <div class="project-card">
+                    <div>
+                        <span class="tag">Hardware Architecture</span>
+                        <h3>SIDDHCESNA-II</h3>
+                        <p>16-bit single-cycle processor. Engineered a custom ISA with full support for control flow, branching and custom Assembler Scesna.</p>
+                    </div>
+                    <a href="https://github.com/siddhu70707/SIDDHCESNA-II" target="_blank" class="btn">Access Repository</a>
+                </div>
+
+                <div class="project-card">
+                    <div>
+                        <span class="tag">Digital Logic</span>
+                        <h3>SIDDHCESNA-I</h3>
+                        <p>Fundamental ALU implementation focusing on modular arithmetic units and hardware-level addition/subtraction primitives.</p>
+                    </div>
+                    <a href="https://github.com/siddhu70707/SIDDHCESNA-I" target="_blank" class="btn">Access Repository</a>
+                </div>
+
+                <div class="project-card">
+                    <div>
+                        <span class="tag">Mathematics</span>
+                        <h3>SIDDHUCEROS-METHOD</h3>
+                        <p>Proprietary Big Int algorithm designed for high-velocity consecutive square generation via difference sequences.</p>
+                    </div>
+                    <a href="https://github.com/siddhu70707/SIDDHUCEROS-METHOD" target="_blank" class="btn">Access Repository</a>
+                </div>
+
+                <div class="project-card">
+                    <div>
+                        <span class="tag">Systems Software</span>
+                        <h3>Raylib Calculator</h3>
+                        <p>Precision-based calculator interface developed in C++ to master logic-rendering pipelines for future engine builds.</p>
+                    </div>
+                    <a href="https://github.com/siddhu70707/Calculator" target="_blank" class="btn">Access Repository</a>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="development">
+            <h2>0x02 // Current_Research</h2>
+            <div class="project-grid">
+
+                <div class="project-card dev-card">
+                    <div>
+                        <span class="tag" style="background:rgba(255,255,255,0.05); color:#666; border-color:#333;">Pipeline_Logic</span>
+                        <h3 style="color: #666;">SIDDHCESNA-II PRO</h3>
+                        <p>Adding immediate load and stack pointer support for function calls and programming convenience.</p>
+                    </div>
+                    <div class="btn btn-outline">STATUS: IN_BUILD</div>
+                </div>
+
+                <div class="project-card dev-card">
+                    <div>
+                        <span class="tag" style="background:rgba(255,255,255,0.05); color:#666; border-color:#333;">Toolchain</span>
+                        <h3 style="color: #666;">System Compiler</h3>
+                        <p>Architecting a native compiler bridge to translate high-level abstractions to custom machine code.</p>
+                    </div>
+                    <div class="btn btn-outline">STATUS: PLANNING</div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="terminal">
+            <h2>0x03 // Architecture_Simulation</h2>
+            <div class="terminal-container">
+                <div class="terminal-header">
+                    <span>FIBONACCI.Scesna — SCESNA ASSEMBLE V1.4</span>
+                    <span>RUNNING...</span>
+                </div>
+                <div class="terminal-body" id="asm-terminal"></div>
+            </div>
+        </section>
+
+        <footer>
+            <a href="https://www.youtube.com/@Siddhu_Labs" target="_blank">// YouTube: @Siddhu_Labs</a>
+        </footer>
+    </div>
+
+    <script>
+        // Binary Rain Logic
+        const canvas = document.getElementById('binary-canvas');
+        const ctx = canvas.getContext('2d');
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+        const binary = "01";
+        const fontSize = 14;
+        const columns = width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+
+        function draw() {
+            ctx.fillStyle = 'rgba(2, 2, 2, 0.1)';
+            ctx.fillRect(0, 0, width, height);
+            ctx.fillStyle = '#00ff41';
+            ctx.font = fontSize + 'px monospace';
+            for (let i = 0; i < drops.length; i++) {
+                const text = binary.charAt(Math.floor(Math.random() * binary.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+        }
+        setInterval(draw, 50);
+
+        // Uptime Timer
+        let startTime = Date.now();
+        setInterval(() => {
+            let diff = Date.now() - startTime;
+            let h = Math.floor(diff / 3600000).toString().padStart(2, '0');
+            let m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
+            let s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
+            document.getElementById('uptime').innerText = `${h}:${m}:${s}`;
+        }, 1000);
+
+        // Typewriter Effect
+        const words = ["System Architect", "Digital Logic Designer", "Low-Level Engineer", "Systems Programmer"];
+        let i = 0, j = 0, currentWord = "", isDeleting = false;
+        const typeContainer = document.getElementById('typewriter');
+
+        function type() {
+            currentWord = words[i];
+            if (isDeleting) {
+                typeContainer.textContent = "> " + currentWord.substring(0, j - 1);
+                j--;
+                if (j === 0) { isDeleting = false; i = (i + 1) % words.length; }
+            } else {
+                typeContainer.textContent = "> " + currentWord.substring(0, j + 1);
+                j++;
+                if (j === currentWord.length) { isDeleting = true; }
+            }
+            setTimeout(type, isDeleting ? 100 : 200);
+        }
+        type();
+
+        const asmCode = `// Fibonacci Sequence Algorithm
+#define LIMIT_ADDR 0x01F
+#define PREV1 0x00A
+#define PREV2 0x00B
+
+@START
+LOAD R0, PREV2  // Load n-2
+MOV R0, RA      // Prepare RA
+LOAD R1, PREV1  // Load n-1
+MOV R1, RB      // Prepare RB
+
+ADD R2          // R2 = RA + RB
+OUT R2          // Output result
+
+STORE R1, PREV2 // Shift n-1 to n-2
+STORE R2, PREV1 // Shift current to n-1
+
+// Loop Check
+MOV R2, RA      // Result to RA
+LOAD R3, LIMIT_ADDR
+MOV R3, RB      // Move limit to RB via R3
+JSMALLER @START
+HALT`;
+
+        let asmIdx = 0;
+        const term = document.getElementById('asm-terminal');
+        function typeAsm() {
+            if (asmIdx < asmCode.length) {
+                term.textContent += asmCode.charAt(asmIdx);
+                asmIdx++;
+                setTimeout(typeAsm, 40);
+            } else {
+                term.innerHTML += '<span class="terminal-cursor"></span>';
+            }
+        }
+        setTimeout(typeAsm, 1500);
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
