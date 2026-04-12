@@ -381,28 +381,27 @@
         type();
 
         const asmCode = `// Fibonacci Sequence Algorithm
-#define LIMIT_ADDR 0x01F
-#define PREV1 0x00A
-#define PREV2 0x00B
+#define zero 0x000
+#define one 0x001
+#define limit 0x002
 
-@START
-LOAD R0, PREV2  // Load n-2
-MOV R0, RA      // Prepare RA
-LOAD R1, PREV1  // Load n-1
-MOV R1, RB      // Prepare RB
+@INITIALISE
+    LOAD r0, zero   
+    LOAD r1, one    
+    LOAD r2, limit 
 
-ADD R2          // R2 = RA + RB
-OUT R2          // Output result
+@LOOP
+    MOV r0, rA    
+    MOV r1, rB    
+    ADD r3          
+    OUT r0        
+    MOV r1, r0    
+    MOV r3, r1   
+    MOV r0, rA   
+    MOV r2, rB    
+    JSMALLER @LOOP   
 
-STORE R1, PREV2 // Shift n-1 to n-2
-STORE R2, PREV1 // Shift current to n-1
-
-// Loop Check
-MOV R2, RA      // Result to RA
-LOAD R3, LIMIT_ADDR
-MOV R3, RB      // Move limit to RB via R3
-JSMALLER @START
-HALT`;
+HALT                 
 
         let asmIdx = 0;
         const term = document.getElementById('asm-terminal');
