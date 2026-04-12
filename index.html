@@ -386,12 +386,12 @@
 #define limit 0x002
 
 @INITIALISE
-    LOAD r0, zero   
+    LOAD r0, zero    
     LOAD r1, one    
-    LOAD r2, limit 
+    LOAD r2, limit  
 
 @LOOP
-    MOV r0, rA    
+    MOV r0, rA  
     MOV r1, rB    
     ADD r3          
     OUT r0        
@@ -401,7 +401,7 @@
     MOV r2, rB    
     JSMALLER @LOOP   
 
-HALT                 
+HALT `;                
 
         let asmIdx = 0;
         const term = document.getElementById('asm-terminal');
